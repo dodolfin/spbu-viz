@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.5.31"
     application
 }
 
@@ -8,8 +8,6 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 val osName = System.getProperty("os.name")
@@ -29,17 +27,12 @@ var targetArch = when (osArch) {
 
 val target = "${targetOs}-${targetArch}"
 
-var version = "0.0.0-SNAPSHOT"
-if (project.hasProperty("skiko.version")) {
-    version = project.properties["skiko.version"] as String
-}
-
 dependencies {
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.4.1")
-    implementation("org.jetbrains.skiko:skiko-jvm-runtime-$target:$version")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
+    implementation("org.apache.xmlgraphics:batik-all:1.14")
+    implementation("com.github.ajalt.clikt:clikt:3.3.0")
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.1.0")
     testImplementation(kotlin("test"))
 }
 
