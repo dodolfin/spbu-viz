@@ -1,63 +1,26 @@
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.swing.Swing
-import org.jetbrains.skija.*
-import org.jetbrains.skiko.SkiaLayer
-import org.jetbrains.skiko.SkiaRenderer
-import org.jetbrains.skiko.SkiaWindow
-import java.awt.Dimension
-import java.awt.event.MouseEvent
-import java.awt.event.MouseMotionAdapter
-import javax.swing.WindowConstants
+/**
+ * Main function.
+ */
+fun main(args: Array<String>) {
+    val SVGChart = getEmptyChart()
+    val chart = BarChart(
+        BarChartData("Test",
+            listOf("Org1", "Org2", "Org3", "Org4"),
+            listOf("Quarter 1/21", "Q2/21", "Q3/21", "Q4/21", "Planned"),
+            listOf(
+                listOf(150.0, 342.0, 234.0, 500.0),
+                listOf(180.0, 400.0, 210.0, 487.999),
+                listOf(120.0, 378.0, 260.0, 420.0),
+                listOf(147.0, 350.0, 215.55, 610.0),
+                listOf(160.0, 321.0, 275.111, 543.43)
+            )
+        ),
+        BarChartStyle(size = Size(800, 600), orientation = BarChartOrientation.VERTICAL, multipleValuesDisplay = BarChartMultipleValuesDisplay.STACKED),
+        SVGChart.SVGCanvas
+    )
+    chart.render()
 
-fun main() {
-    createWindow("pf-2021-viz")
-}
+    SVGChart.SVGCanvas.stream("produce.svg")
 
-fun createWindow(title: String) = runBlocking(Dispatchers.Swing) {
-    val window = SkiaWindow()
-    window.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
-    window.title = title
-
-    window.layer.renderer = Renderer(window.layer)
-    window.layer.addMouseMotionListener(MyMouseMotionAdapter)
-
-    window.preferredSize = Dimension(800, 600)
-    window.minimumSize = Dimension(100,100)
-    window.pack()
-    window.layer.awaitRedraw()
-    window.isVisible = true
-}
-
-class Renderer(val layer: SkiaLayer): SkiaRenderer {
-    val typeface = Typeface.makeFromFile("fonts/JetBrainsMono-Regular.ttf")
-    val font = Font(typeface, 40f)
-    val paint = Paint().apply {
-        color = 0xff9BC730L.toInt()
-        mode = PaintMode.FILL
-        strokeWidth = 1f
-    }
-
-    override fun onRender(canvas: Canvas, width: Int, height: Int, nanoTime: Long) {
-        val contentScale = layer.contentScale
-        canvas.scale(contentScale, contentScale)
-        val w = (width / contentScale).toInt()
-        val h = (height / contentScale).toInt()
-
-        // РИСОВАНИЕ
-
-        layer.needRedraw()
-    }
-}
-
-object State {
-    var mouseX = 0f
-    var mouseY = 0f
-}
-
-object MyMouseMotionAdapter : MouseMotionAdapter() {
-    override fun mouseMoved(event: MouseEvent) {
-        State.mouseX = event.x.toFloat()
-        State.mouseY = event.y.toFloat()
-    }
+    createWindow("pf-2021-viz", "produce.svg")
 }
