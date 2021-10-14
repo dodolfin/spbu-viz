@@ -8,8 +8,8 @@ import java.awt.geom.Rectangle2D
 import kotlin.math.*
 
 /**
- * The data for rendering chart itself. [values] stores the 2D table with data (as in Excel). Rows are treated as
- * separate bars, and columns are treated as bars with different colors.
+ * The data for rendering chart itself. [values] stores the 2D table with data (as in Excel). Only the first row is taken
+ * as data, others are ignored.
  */
 data class BarChartData(
     val chartTitle: String,
@@ -134,8 +134,8 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
 
         if (data.chartTitle.isNotEmpty()) {
             titleLayout.draw(
-                SVGCanvas, (titleRectangle.centerX - (titleLayout.bounds.width / 2.0)).toFloat(),
-                (titleRectangle.centerY + (titleLayout.ascent / 2.0)).toFloat()
+                SVGCanvas, (titleRectangle.centerX - (titleLayout.bounds.width / 2.0) - titleLayout.bounds.x).toFloat(),
+                (titleRectangle.centerY - (titleLayout.bounds.height / 2.0) - titleLayout.bounds.y).toFloat()
             )
         }
     }
@@ -186,10 +186,10 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
      */
     fun setLegendRectangle() {
         legendRectangle.apply {
-            x = 5.0
-            y = style.size.height.toDouble() - 5.0 - columnsLabelsLayouts.maxOf { it.bounds.height }
-            width = style.size.width.toDouble() - 10.0
-            height = if (style.displayLegend) columnsLabelsLayouts.maxOf { it.bounds.height } else 0.0
+            x = defaultMargin
+            y = style.size.height.toDouble() - defaultMargin - columnsLabelsLayouts.maxOf { it.bounds.height }
+            width = style.size.width.toDouble() - 2 * defaultMargin
+            height = if (style.displayLegend) columnsLabelsLayouts.maxOf { it.bounds.height } else 0.0 + 2 * defaultMargin
         }
     }
 
@@ -198,25 +198,25 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
      */
     fun setGraphAndGridRectangle() {
         graphRectangle.apply {
-            x = 5.0
+            x = defaultMargin
             y = titleRectangle.maxY
-            width = style.size.width.toDouble() - 10.0
+            width = style.size.width.toDouble() - 2 * defaultMargin
             height = legendRectangle.minY - titleRectangle.maxY
         }
 
         gridRectangle.apply {
             when (style.orientation) {
                 VERTICAL -> {
-                    x = graphRectangle.minX + 5.0 + valuesLabelsLayouts.maxOf { it.bounds.width }
-                    y = graphRectangle.minY + 5.0
-                    width = graphRectangle.width - 10.0 - valuesLabelsLayouts.maxOf { it.bounds.width }
-                    height = graphRectangle.height - 10.0 - rowsLabelsLayouts.maxOf { it.bounds.height }
+                    x = graphRectangle.minX + defaultMargin + valuesLabelsLayouts.maxOf { it.bounds.width }
+                    y = graphRectangle.minY + defaultMargin
+                    width = graphRectangle.width - 2 * defaultMargin - valuesLabelsLayouts.maxOf { it.bounds.width }
+                    height = graphRectangle.height - 2 * defaultMargin - rowsLabelsLayouts.maxOf { it.bounds.height }
                 }
                 HORIZONTAL -> {
-                    x = graphRectangle.minX + 5.0 + rowsLabelsLayouts.maxOf { it.bounds.width }
-                    y = graphRectangle.minY + 5.0
-                    width = graphRectangle.width - 10.0 - rowsLabelsLayouts.maxOf { it.bounds.width }
-                    height = graphRectangle.height - 10.0 - valuesLabelsLayouts.maxOf { it.bounds.height }
+                    x = graphRectangle.minX + defaultMargin + rowsLabelsLayouts.maxOf { it.bounds.width }
+                    y = graphRectangle.minY + defaultMargin
+                    width = graphRectangle.width - 2 * defaultMargin - rowsLabelsLayouts.maxOf { it.bounds.width }
+                    height = graphRectangle.height - 2 * defaultMargin - valuesLabelsLayouts.maxOf { it.bounds.height }
                 }
             }
         }
@@ -231,16 +231,16 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
             VERTICAL -> {
                 getLinearInterpolation(gridRectangle.minY, gridRectangle.maxY, valuesAxisLabels.size).forEachIndexed { index, y ->
                     val layout = valuesLabelsLayouts[index]
-                    layout.draw(SVGCanvas, (gridRectangle.minX - layout.bounds.width - defaultMargin).toFloat(),
-                        (y + (layout.ascent / 2.0)).toFloat()
+                    layout.draw(SVGCanvas, (gridRectangle.minX - layout.bounds.width - layout.bounds.x).toFloat(),
+                        (y - (layout.bounds.y / 2.0)).toFloat()
                     )
                 }
             }
             HORIZONTAL -> {
                 getLinearInterpolationMiddles(gridRectangle.minY, gridRectangle.maxY, rowsLabelsLayouts.size).forEachIndexed { index, y ->
                     val layout = rowsLabelsLayouts[index]
-                    layout.draw(SVGCanvas, (gridRectangle.minX - layout.bounds.width - defaultMargin).toFloat(),
-                        (y + (layout.ascent / 2.0)).toFloat()
+                    layout.draw(SVGCanvas, (gridRectangle.minX - layout.bounds.width - layout.bounds.x).toFloat(),
+                        (y - (layout.bounds.y / 2.0)).toFloat()
                     )
                 }
             }
@@ -256,16 +256,16 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
             VERTICAL -> {
                 getLinearInterpolationMiddles(gridRectangle.minX, gridRectangle.maxX, rowsLabelsLayouts.size).forEachIndexed { index, x ->
                     val layout = rowsLabelsLayouts[index]
-                    layout.draw(SVGCanvas, (x - (layout.bounds.width / 2.0)).toFloat(),
-                        (gridRectangle.maxY + layout.ascent).toFloat()
+                    layout.draw(SVGCanvas, (x - (layout.bounds.width / 2.0) - layout.bounds.x).toFloat(),
+                        (gridRectangle.maxY - layout.bounds.y).toFloat()
                     )
                 }
             }
             HORIZONTAL -> {
                 getLinearInterpolation(gridRectangle.minX, gridRectangle.maxX, valuesLabelsLayouts.size).forEachIndexed { index, x ->
                     val layout = valuesLabelsLayouts[index]
-                    layout.draw(SVGCanvas, (x - (layout.bounds.width / 2.0)).toFloat(),
-                        (gridRectangle.maxY + layout.ascent).toFloat()
+                    layout.draw(SVGCanvas, (x - (layout.bounds.width / 2.0) - layout.bounds.x).toFloat(),
+                        (gridRectangle.maxY - layout.bounds.y).toFloat()
                     )
                 }
             }
@@ -426,7 +426,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
 
             currentX += legendHeight + defaultMargin
 
-            layout.draw(SVGCanvas, currentX.toFloat(), (legendRectangle.minY + defaultMargin + layout.ascent).toFloat())
+            layout.draw(SVGCanvas, (currentX - layout.bounds.x).toFloat(), (legendRectangle.minY + defaultMargin - layout.bounds.y).toFloat())
 
             currentX += layout.bounds.width + 2 * defaultMargin
         }
