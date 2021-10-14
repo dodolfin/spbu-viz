@@ -1,8 +1,15 @@
+/**
+ * The data for rendering chart itself. [values] stores the 2D table with data (as in Excel). Only the first column is
+ * taken as data, all others are ignored.
+ */
 data class HistogramChartData(
     val chartTitle: String,
     val values: List<List<Double>>,
     val barsCount: Int
 ) {
+    /**
+     * Returns data for building bar chart.
+     */
     fun getBarChartData(): BarChartData {
         val firstColumn = values.map { it[0] }
 
