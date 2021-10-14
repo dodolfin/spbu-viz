@@ -43,3 +43,9 @@ data class HistogramChartStyle(
     val gridColor: Color = Color.LIGHT_GRAY,
     val barColor: Color = Color.BLUE
 )
+
+data class PieChartStyle(
+    val size: Size = Size(800, 600),
+    val sectorsColors: List<Color> = listOf(Color.CYAN, Color.GREEN, Color.YELLOW, Color.ORANGE),
+    val displayLegend: Boolean = true
+)
