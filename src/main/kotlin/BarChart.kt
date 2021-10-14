@@ -300,9 +300,11 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
             VERTICAL -> {
                 val width = getLinearInterpolationDelta(gridRectangle.minX, gridRectangle.maxX, data.values.size + 1)
                 getLinearInterpolation(gridRectangle.minX, gridRectangle.maxX, data.values.size + 1).dropLast(1).forEach { x ->
-                    val startX = x + (style.barWidthRate / 2.0) * width
-                    val endX = x + (1 - style.barWidthRate / 2.0) * width
+                    val startX = x + ((1 - style.barWidthRate) / 2.0) * width
+                    val endX = x + (0.5 + style.barWidthRate / 2.0) * width
                     barsRectangles.add(Rectangle2D.Double(startX, gridRectangle.minY, endX - startX, gridRectangle.height))
+                }
+                repeat(data.values[0].size) {
                     columnsColors.add(style.barColors[nextColor()])
                 }
             }
@@ -312,6 +314,8 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
                     val startY = y + (style.barWidthRate / 2.0) * height
                     val endY = y + (1 - style.barWidthRate / 2.0) * height
                     barsRectangles.add(Rectangle2D.Double(gridRectangle.minX, startY, gridRectangle.width, endY - startY))
+                }
+                repeat(data.values[0].size) {
                     columnsColors.add(style.barColors[nextColor()])
                 }
             }
