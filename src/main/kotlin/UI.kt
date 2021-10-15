@@ -60,6 +60,9 @@ class Viz : CliktCommand() {
         "pie",
         "scatter"
     ).required()
+    val isHorizontal: Boolean by option("--horizontal", help = "If bar is the selected chart type, make bars horizontal").flag()
+    val isStacked: Boolean by option("--stacked", help = "If bar is the selected chart type, make different inputs of data stack on top of each other").flag()
+    val barsCount: Int by option("-b", "--bars", help = "If histogram is the selected chart type, this option sets the number of bars (10 is default)").int().default(10)
     val dontShowWindow: Boolean by option("-m", "--minimize", help = "Don't show window with SVG").flag()
     val chartTitle: String? by option("--title", help = "Set the chart title")
 
@@ -83,7 +86,10 @@ class Viz : CliktCommand() {
                         parsedCSV.rowsLabels,
                         parsedCSV.values
                     ),
-                    BarChartStyle(size = size),
+                    BarChartStyle(size = size,
+                        orientation = if (isHorizontal) Orientation.HORIZONTAL else Orientation.VERTICAL,
+                        multipleValuesDisplay = if (isStacked) BarChartMultipleValuesDisplay.STACKED else BarChartMultipleValuesDisplay.CLUSTERED
+                    ),
                     SVGChart.SVGCanvas
                 ).render()
             }
@@ -92,7 +98,7 @@ class Viz : CliktCommand() {
                     HistogramChartData(
                         chartTitle ?: "",
                         parsedCSV.values,
-                        10
+                        if (barsCount <= 0) 10 else barsCount
                     ),
                     HistogramChartStyle(size = size),
                     SVGChart.SVGCanvas
