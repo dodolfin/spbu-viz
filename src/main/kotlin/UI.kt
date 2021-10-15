@@ -38,7 +38,7 @@ class Viz : CliktCommand() {
     val inputFile: File by option(
         "-d",
         "--data",
-        help = "the name of the data file (in CSV format)"
+        help = "(required) the name of the data file (in CSV format)"
     ).file(canBeDir = false, canBeSymlink = false, mustExist = true, mustBeReadable = true).required()
     val styleFile: File? by option(
         "-y",
@@ -61,7 +61,7 @@ class Viz : CliktCommand() {
         "--columns-labels",
         help = "treat first row as labels for columns in CSV"
     ).flag()
-    val chartType: String by option("-t", "--type", help = "the type of the chart").choice(
+    val chartType: String by option("-t", "--type", help = "(required) the type of the chart").choice(
         "bar",
         "histogram",
         "pie",
