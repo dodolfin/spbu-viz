@@ -5,6 +5,7 @@ import org.apache.batik.transcoder.TranscoderOutput
 import org.apache.batik.transcoder.image.PNGTranscoder
 import org.w3c.dom.DOMImplementation
 import org.w3c.dom.Document
+import java.awt.Dimension
 import java.io.File
 import java.io.FileOutputStream
 
@@ -23,7 +24,7 @@ data class SVGChart(val document: Document, val SVGCanvas: SVGCanvas)
 /**
  * Function that returns empty chart with SVGCanvas. Copied from Apache Batik documentation and slightly modified.
  */
-fun getEmptyChart(size: Size): SVGChart {
+fun getEmptyChart(size: Dimension): SVGChart {
     // Get a DOMImplementation
     val domImpl: DOMImplementation = GenericDOMImplementation.getDOMImplementation()
 
@@ -31,11 +32,14 @@ fun getEmptyChart(size: Size): SVGChart {
     val svgNS = "http://www.w3.org/2000/svg"
     val document = domImpl.createDocument(svgNS, "svg", null)
 
+    val SVGCanvas = SVGCanvas(document)
+    SVGCanvas.svgCanvasSize = Dimension(size.width, size.height)
+
     // Return an instance of the SVGChart
     return SVGChart(document, SVGCanvas(document))
 }
 
-fun rasterize(inputFilename: String, outputFilename: String, size: Size) {
+fun rasterize(inputFilename: String, outputFilename: String, size: Dimension) {
     // Create a JPEGTranscoder and set its quality hint.
     val t = PNGTranscoder()
 

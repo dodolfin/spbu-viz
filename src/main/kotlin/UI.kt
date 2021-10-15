@@ -42,7 +42,7 @@ class Viz : CliktCommand() {
             return
         }
 
-        val size = Size(chartSize.first, chartSize.second)
+        val size = Dimension(chartSize.first, chartSize.second)
         val SVGChart = getEmptyChart(size)
 
         when (chartType) {
@@ -54,7 +54,7 @@ class Viz : CliktCommand() {
                         parsedCSV.rowsLabels,
                         parsedCSV.values
                     ),
-                    BarChartStyle(size = Size(chartSize.first, chartSize.second)),
+                    BarChartStyle(size = size),
                     SVGChart.SVGCanvas
                 ).render()
             }

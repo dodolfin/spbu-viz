@@ -1,14 +1,10 @@
 import java.awt.Color
+import java.awt.Dimension
 
 /**
  * Default value of indentation (in pixels)
  */
 const val defaultMargin = 5.0
-
-/**
- * Represents the size of output chart (in pixels)
- */
-data class Size(val width: Int, val height: Int)
 
 /**
  * Bars can be placed either vertically or horizontally
@@ -29,7 +25,7 @@ enum class BarChartMultipleValuesDisplay {
  * Represents different style properties of chart.
  */
 data class BarChartStyle(
-    val size: Size = Size(800, 600),
+    val size: Dimension = Dimension(800, 600),
     val orientation: BarChartOrientation = BarChartOrientation.VERTICAL,
     val multipleValuesDisplay: BarChartMultipleValuesDisplay = BarChartMultipleValuesDisplay.CLUSTERED,
     val gridColor: Color = Color.LIGHT_GRAY,
@@ -39,13 +35,13 @@ data class BarChartStyle(
 )
 
 data class HistogramChartStyle(
-    val size: Size = Size(800, 600),
+    val size: Dimension = Dimension(800, 600),
     val gridColor: Color = Color.LIGHT_GRAY,
     val barColor: Color = Color.BLUE
 )
 
 data class PieChartStyle(
-    val size: Size = Size(800, 600),
+    val size: Dimension = Dimension(800, 600),
     val sectorsColors: List<Color> = listOf(Color.MAGENTA, Color.RED, Color.PINK, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.DARK_GRAY),
     val displayLegend: Boolean = true
 )
