@@ -123,16 +123,17 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
      * Renders title and calculates title rectangle.
      */
     fun renderTitleSetTitleRectangle() {
-        val titleLayout = TextLayout(data.chartTitle, titleFont, SVGCanvas.fontRenderContext)
-
         titleRectangle.apply {
             x = defaultMargin
             y = defaultMargin
             width = style.size.width.toDouble() - 2 * defaultMargin
-            height = if (data.chartTitle.isEmpty()) 0.0 else 2 * defaultMargin + titleLayout.bounds.height
+            height = 0.0
         }
 
         if (data.chartTitle.isNotEmpty()) {
+            val titleLayout = TextLayout(data.chartTitle, titleFont, SVGCanvas.fontRenderContext)
+            titleRectangle.height = 2 * defaultMargin + titleLayout.bounds.height
+
             titleLayout.draw(
                 SVGCanvas, (titleRectangle.centerX - (titleLayout.bounds.width / 2.0) - titleLayout.bounds.x).toFloat(),
                 (titleRectangle.centerY - (titleLayout.bounds.height / 2.0) - titleLayout.bounds.y).toFloat()
@@ -231,7 +232,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
             VERTICAL -> {
                 getLinearInterpolation(gridRectangle.minY, gridRectangle.maxY, valuesAxisLabels.size).forEachIndexed { index, y ->
                     val layout = valuesLabelsLayouts[index]
-                    layout.draw(SVGCanvas, (gridRectangle.minX - layout.bounds.width - layout.bounds.x).toFloat(),
+                    layout.draw(SVGCanvas, (gridRectangle.minX - layout.bounds.width - layout.bounds.x - defaultMargin).toFloat(),
                         (y - (layout.bounds.y / 2.0)).toFloat()
                     )
                 }
@@ -239,7 +240,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
             HORIZONTAL -> {
                 getLinearInterpolationMiddles(gridRectangle.minY, gridRectangle.maxY, rowsLabelsLayouts.size).forEachIndexed { index, y ->
                     val layout = rowsLabelsLayouts[index]
-                    layout.draw(SVGCanvas, (gridRectangle.minX - layout.bounds.width - layout.bounds.x).toFloat(),
+                    layout.draw(SVGCanvas, (gridRectangle.minX - layout.bounds.width - layout.bounds.x - defaultMargin).toFloat(),
                         (y - (layout.bounds.y / 2.0)).toFloat()
                     )
                 }
@@ -257,7 +258,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
                 getLinearInterpolationMiddles(gridRectangle.minX, gridRectangle.maxX, rowsLabelsLayouts.size).forEachIndexed { index, x ->
                     val layout = rowsLabelsLayouts[index]
                     layout.draw(SVGCanvas, (x - (layout.bounds.width / 2.0) - layout.bounds.x).toFloat(),
-                        (gridRectangle.maxY - layout.bounds.y).toFloat()
+                        (gridRectangle.maxY - layout.bounds.y + defaultMargin).toFloat()
                     )
                 }
             }
@@ -265,7 +266,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
                 getLinearInterpolation(gridRectangle.minX, gridRectangle.maxX, valuesLabelsLayouts.size).forEachIndexed { index, x ->
                     val layout = valuesLabelsLayouts[index]
                     layout.draw(SVGCanvas, (x - (layout.bounds.width / 2.0) - layout.bounds.x).toFloat(),
-                        (gridRectangle.maxY - layout.bounds.y).toFloat()
+                        (gridRectangle.maxY - layout.bounds.y + defaultMargin).toFloat()
                     )
                 }
             }
@@ -311,8 +312,8 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
             HORIZONTAL -> {
                 val height = getLinearInterpolationDelta(gridRectangle.minY, gridRectangle.maxY, data.values.size + 1)
                 getLinearInterpolation(gridRectangle.minY, gridRectangle.maxY, data.values.size + 1).dropLast(1).forEach { y ->
-                    val startY = y + (style.barWidthRate / 2.0) * height
-                    val endY = y + (1 - style.barWidthRate / 2.0) * height
+                    val startY = y + ((1 - style.barWidthRate) / 2.0) * height
+                    val endY = y + (0.5 + style.barWidthRate / 2.0) * height
                     barsRectangles.add(Rectangle2D.Double(gridRectangle.minX, startY, gridRectangle.width, endY - startY))
                 }
                 repeat(data.values[0].size) {
