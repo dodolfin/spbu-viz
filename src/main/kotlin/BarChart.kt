@@ -110,7 +110,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
         }
         checkNotNull(maxValue)
 
-        valuesAxisLabels.addAll(getTenPowers(maxValue, if (style.multipleValuesDisplay == STACKED) 1.0 else 0.0))
+        valuesAxisLabels.addAll(getTenPowers(maxValue, if (style.multipleValuesDisplay == STACKED) -1.0 else 0.0))
 
         this.gridMaxValue = valuesAxisLabels.last()
 
