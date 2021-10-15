@@ -3,12 +3,19 @@ import java.io.File
 import java.text.NumberFormat
 import java.util.*
 
+/**
+ * Parsed CSV is split into values themselves, rowsLabels for series of data and columnsLabels
+ * for different sources of data
+ */
 data class ParsedCSV(
     val rowsLabels: List<String>,
     val columnsLabels: List<String>,
     val values: List<List<Double>>
 )
 
+/**
+ * Returns ParsedCSV, if the parsing was successful. Returns null otherwise.
+ */
 fun parseCSVBarChartData(CSVFile: File, extractRowsLabels: Boolean, extractColumnsLabels: Boolean): ParsedCSV? {
     val data = csvReader { delimiter = ';' }.readAll(CSVFile)
 

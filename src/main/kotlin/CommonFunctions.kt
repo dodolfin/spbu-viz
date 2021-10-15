@@ -7,6 +7,12 @@ import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
 
+/**
+ * For segment [0, maxValue] returns a list containing labels for values axis.
+ * Those labels should conform to certain rules, such as each label x (except zero) should be
+ * in [floor(log10(x)), ceil(log10(x))] and y = x / 10 ^ floor(log(10)) should be in {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+ * or {0, 2, 4, 6, 8} or {0, 5}.
+ */
 fun getTenPowers(maxValue: Double, logDelta: Double): List<Double> {
     val result = mutableListOf<Double>()
 

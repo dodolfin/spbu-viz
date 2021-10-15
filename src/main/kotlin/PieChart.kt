@@ -5,8 +5,8 @@ import java.awt.geom.Arc2D
 import java.awt.geom.Rectangle2D
 
 /**
- * The data for rendering chart itself. [values] stores the 2D table with data (as in Excel). Only
- * separate bars, and columns are treated as bars with different colors.
+ * The data for rendering chart itself. [values] stores the 2D table with data (as in Excel). Only the first row is
+ * taken from [values]; others are ignored.
  */
 data class PieChartData(
     val chartTitle: String,
@@ -41,9 +41,7 @@ data class PieChart(val data: PieChartData, val style: PieChartStyle, val SVGCan
      * [columnsLabelsLayouts] stores TextLayout objects for virtually all text on the chart. We need to store
      * TextLayout objects to properly calculate different sizes & indentations.
      */
-    val valuesLabelsLayouts = mutableListOf<TextLayout>()
     val columnsLabelsLayouts = mutableListOf<TextLayout>()
-    val rowsLabelsLayouts = mutableListOf<TextLayout>()
 
     /**
      * Internal variable used for assigning colors to columns.

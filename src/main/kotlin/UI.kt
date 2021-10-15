@@ -25,6 +25,9 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import kotlin.system.exitProcess
 
+/**
+ * Represents the whole CLI interface with all options available. Clikt magic.
+ */
 class Viz : CliktCommand() {
     val outputFile: File by option("-o", "--output", help = "the name of the output file").file(canBeDir = false, canBeSymlink = false, mustBeReadable = true, mustBeWritable = true).default(File("output.svg"))
     val inputFile: File by option("-d", "--data", help = "the name of the data file (in CSV format)").file(canBeDir = false, canBeSymlink = false, mustExist = true, mustBeReadable = true).required()
@@ -113,7 +116,7 @@ class Viz : CliktCommand() {
 }
 
 /**
- * Magic function that creates window.
+ * Magic function that creates the window.
  */
 fun createWindow(title: String, filename: String, size: Dimension) = runBlocking(Dispatchers.Swing) {
     val f = JFrame(title)

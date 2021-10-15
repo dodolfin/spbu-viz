@@ -39,7 +39,7 @@ enum class BarChartMultipleValuesDisplay {
 }
 
 /**
- * Represents different style properties of chart.
+ * Represents different style properties of bar chart.
  */
 data class BarChartStyle(
     val size: Dimension = Dimension(800, 600),
@@ -50,17 +50,26 @@ data class BarChartStyle(
     val barWidthRate: Double = 0.8
 )
 
+/**
+ * Represents different style properties of histogram chart.
+ */
 data class HistogramChartStyle(
     val size: Dimension = Dimension(800, 600),
     val barColor: Color = Color.BLUE
 )
 
+/**
+ * Represents different style properties of pie chart.
+ */
 data class PieChartStyle(
     val size: Dimension = Dimension(800, 600),
     val sectorsColors: List<Color> = listOf(Color.MAGENTA, Color.RED, Color.PINK, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.DARK_GRAY),
     val displayLegend: Boolean = true
 )
 
+/**
+ * Represents different style properties of scatter chart.
+ */
 data class ScatterChartStyle(
     val size: Dimension = Dimension(800, 600),
     val dotsColor: Color = Color.GREEN,

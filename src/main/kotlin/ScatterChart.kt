@@ -3,14 +3,22 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 import kotlin.math.*
 
+/**
+ * The data for rendering chart itself. [values] stores the 2D table with data (as in Excel). Only the first two columns
+ * are taken from [values]; others are ignored. First column is treated as x-coordinate of a point,
+ * and second as y-coordinate.
+ */
 data class ScatterChartData(
     val chartTitle: String,
     val values: List<List<Double>>
 )
 
+/**
+ * Represents all data needed for rendering scatter chart.
+ */
 data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle, val SVGCanvas: SVGCanvas) {
     /**
-     * [titleRectangle], [graphRectangle], [gridRectangle] and [legendRectangle] represent rectangles in which corresponding
+     * [titleRectangle], [graphRectangle], [gridRectangle] represent rectangles in which corresponding
      * parts of the chart are rendered (with [defaultMargin] indentation)
      */
     val titleRectangle = Rectangle2D.Double()
@@ -18,15 +26,16 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
     val gridRectangle = Rectangle2D.Double()
 
     /**
-     * [valuesAxisLabels] stores labels upon which grid is drawn. Each label can be represented by formula k * 10 ^ p,
-     * where k is in {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} and
-     * p is minimal p (such as 10 ^ p is less than maximum value in data) minus 1.
+     * [xAxisLabels] and [yAxisLabels] stores labels upon which grid is drawn.
      */
     val xAxisLabels = mutableListOf<Double>()
     val yAxisLabels = mutableListOf<Double>()
 
     /**
-     * Maximum value of [valuesAxisLabels]
+     * To build xAxisLabels and yAxisLabels, we reuse function [getTenPowers], which was firstly written for BarChart.
+     * It only supports non-negative values, so we have to perform some calculations to put our data set to that form.
+     * [xDelta] and [yDelta], applied to x and y coordinates respectively, makes every point non-negative.
+     * [xMaxValue] and [yMaxValue] is maximum values of x and y in relative coordinates, described earlier.
      */
     var xDelta = 0.0
     var xMaxValue = 0.0
@@ -34,7 +43,7 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
     var yMaxValue = 0.0
 
     /**
-     * [valuesLabelsLayouts], [columnsLabelsLayouts] and [rowsLabelsLayouts] stores TextLayout objects for virtually
+     * [xAxisLabelsLayouts] and [yAxisLabelsLayouts] stores TextLayout objects for virtually
      * all text on the chart. We need to store TextLayout objects to properly calculate different sizes & indentations.
      */
     val xAxisLabelsLayouts = mutableListOf<TextLayout>()
@@ -62,10 +71,14 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
         }
     }
 
+    /**
+     * Returns minimal number such that all elements of the list become (or stay) non-negative after adding it to each
+     * element of the list.
+     */
     fun getDelta(a: List<Double>) = -a.minOf { it }
 
     /**
-     * Makes labels upon which grid is drawn. See [valuesAxisLabels] documentation for more information.
+     * Makes labels upon which grid is drawn.
      */
     fun generateValuesLabels() {
         val xs = data.values.map { it[0] }
@@ -125,8 +138,7 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
     }
 
     /**
-     * Renders X (horizontal) axis labels. Note that depending on [style].orientation, those might be [valuesLabelsLayouts],
-     * as well as [rowsLabelsLayouts].
+     * Renders X (horizontal) axis labels.
      */
     fun renderXAxisLabels() {
         xAxisLabelsLayouts.zip(getLinearInterpolation(gridRectangle.minX, gridRectangle.maxX, xAxisLabels.size)).forEach { (layout, x) ->
@@ -137,7 +149,7 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
     }
 
     /**
-     * Renders bars if [style].orientation is vertical.
+     * Renders points on scatter chart.
      */
     fun renderPoints() {
         val radius = style.pointRadius

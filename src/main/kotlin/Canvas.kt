@@ -9,7 +9,6 @@ import java.awt.Dimension
 import java.io.File
 import java.io.FileOutputStream
 
-
 /**
  * Since SVGGraphics2D works like a canvas that has methods like "draw this" and "draw that", the name SVGCanvas is
  * more suitable.
