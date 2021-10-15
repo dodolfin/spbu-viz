@@ -1,3 +1,8 @@
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.types.choice
+import com.github.ajalt.clikt.parameters.types.file
+import com.github.ajalt.clikt.parameters.types.int
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.swing.Swing
@@ -17,6 +22,70 @@ import javax.swing.JComponent
 import javax.swing.JFrame
 import javax.swing.JLabel
 import javax.swing.JPanel
+
+class Viz : CliktCommand() {
+    val outputFile: File by option("-o", "--output", help = "the name of the output file").file(canBeDir = false, canBeSymlink = false, mustBeWritable = true).default(File("output.svg"))
+    val inputFile: File by option("-d", "--data", help = "the name of the data file (in CSV format)").file(canBeDir = false, canBeSymlink = false, mustExist = true, mustBeReadable = true).required()
+    val styleFile: File? by option("-y", "--style", help = "the name of the style file (in JSON format)").file(canBeDir = false, canBeSymlink = false, mustExist = true, mustBeReadable = true)
+    val chartSize: Pair<Int, Int> by option("-s", "--size", help = "dimensions of the output file: first width, then height").int().pair().default(Pair(800, 600))
+    val renderPNG: Boolean by option("-p", "--PNG", help = "render PNG, if this option is present").flag()
+    val extractRowsLabels: Boolean by option("-r", "--rows-labels", help = "treat first column as labels for rows in CSV").flag()
+    val extractColumnLabels: Boolean by option("-c", "--columns-labels", help = "treat first row as labels for columns in CSV").flag()
+    val chartType: String by option("-t", "--type", help = "the type of the chart").choice("bar", "histogram", "pie").required()
+    val chartTitle: String? by option("--title", help = "set the chart title")
+
+    override fun run() {
+        val parsedCSV = parseCSVBarChartData(inputFile, extractRowsLabels, extractColumnLabels)
+
+        if (parsedCSV == null) {
+            println("Malformed input file.")
+            return
+        }
+
+        val SVGChart = getEmptyChart()
+
+        when (chartType) {
+            "bar" -> {
+                BarChart(
+                    BarChartData(
+                        chartTitle ?: "",
+                        parsedCSV.columnsLabels,
+                        parsedCSV.rowsLabels,
+                        parsedCSV.values
+                    ),
+                    BarChartStyle(size = Size(chartSize.first, chartSize.second)),
+                    SVGChart.SVGCanvas
+                ).render()
+            }
+            "histogram" -> {
+                HistogramChart(
+                    HistogramChartData(
+                        chartTitle ?: "",
+                        parsedCSV.values,
+                        10
+                    ),
+                    HistogramChartStyle(size = Size(chartSize.first, chartSize.second)),
+                    SVGChart.SVGCanvas
+                ).render()
+            }
+            "pie" -> {
+                PieChart(
+                    PieChartData(
+                        chartTitle ?: "",
+                        parsedCSV.columnsLabels,
+                        parsedCSV.values
+                    ),
+                    PieChartStyle(size = Size(chartSize.first, chartSize.second)),
+                    SVGChart.SVGCanvas
+                ).render()
+            }
+        }
+
+        SVGChart.SVGCanvas.stream(outputFile.absolutePath)
+
+        createWindow("pf-2021-viz", outputFile.absolutePath)
+    }
+}
 
 /**
  * Magic function that creates window.
