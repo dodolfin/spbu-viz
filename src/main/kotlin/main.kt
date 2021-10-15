@@ -1,5 +1,3 @@
-import com.github.ajalt.clikt.core.subcommands
-
 /**
  * Main function. Clikt magic.
  */
