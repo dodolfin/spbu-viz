@@ -1,9 +1,7 @@
 import java.awt.Color
-import java.awt.*
-import BarChartOrientation.*
+import Orientation.*
 import BarChartMultipleValuesDisplay.*
 import java.awt.font.TextLayout
-import java.awt.geom.Line2D
 import java.awt.geom.Rectangle2D
 import kotlin.math.*
 
@@ -101,12 +99,6 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
     val rowsLabelsLayouts = mutableListOf<TextLayout>()
 
     /**
-     * [titleFont] and [labelFont] store fonts for title and all other text on the chart respectively.
-     */
-    val titleFont = Font("Arial", Font.PLAIN, 36)
-    val labelFont = Font("Arial", Font.PLAIN, 14)
-
-    /**
      * Internal variable used for assigning colors to columns.
      */
     var colorIndex = -1
@@ -155,10 +147,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
         }
         checkNotNull(maxValue)
 
-        val step = (10.0).pow(floor(log10(maxValue)) - if (style.multipleValuesDisplay == STACKED) 1.0 else 0.0)
-        for (i in 0..ceil(maxValue / step).toInt()) {
-            valuesAxisLabels.add(i.toDouble() * step)
-        }
+        valuesAxisLabels.addAll(getTenPowers(maxValue, if (style.multipleValuesDisplay == STACKED) 1.0 else 0.0))
 
         this.gridMaxValue = valuesAxisLabels.last()
 
@@ -268,25 +257,6 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
                     layout.draw(SVGCanvas, (x - (layout.bounds.width / 2.0) - layout.bounds.x).toFloat(),
                         (gridRectangle.maxY - layout.bounds.y + defaultMargin).toFloat()
                     )
-                }
-            }
-        }
-    }
-
-    /**
-     * Renders grid (those light gray (by default) lines that help you estimate the value that bar represents)
-     */
-    fun renderGrid() {
-        SVGCanvas.paint = style.gridColor
-        when (style.orientation) {
-            VERTICAL -> {
-                getLinearInterpolation(gridRectangle.minY, gridRectangle.maxY, valuesAxisLabels.size).forEach { y ->
-                    SVGCanvas.draw(Line2D.Double(gridRectangle.minX, y, gridRectangle.maxX, y))
-                }
-            }
-            HORIZONTAL -> {
-                getLinearInterpolation(gridRectangle.minX, gridRectangle.maxX, valuesAxisLabels.size).forEach { x ->
-                    SVGCanvas.draw(Line2D.Double(x, gridRectangle.minY, x, gridRectangle.maxY))
                 }
             }
         }
@@ -406,34 +376,6 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
     }
 
     /**
-     * Renders legend if [style].displayLegend is true.
-     */
-    fun renderLegend() {
-        if (!style.displayLegend) {
-            return
-        }
-
-        val n = columnsLabelsLayouts.size.toDouble()
-        val legendHeight = columnsLabelsLayouts.maxOf { it.bounds.height }
-        val legendWidth = n * legendHeight + columnsLabelsLayouts.sumOf { it.bounds.width } + (2 * (n - 1) + n) * defaultMargin
-        var currentX = legendRectangle.centerX - (legendWidth / 2.0)
-        columnsLabelsLayouts.forEachIndexed { index, layout ->
-            val colorSquare = Rectangle2D.Double(currentX, legendRectangle.minY + defaultMargin, legendHeight, legendHeight)
-
-            SVGCanvas.color = columnsColors[index]
-            SVGCanvas.fill(colorSquare)
-            SVGCanvas.color = Color.BLACK
-            SVGCanvas.draw(colorSquare)
-
-            currentX += legendHeight + defaultMargin
-
-            layout.draw(SVGCanvas, (currentX - layout.bounds.x).toFloat(), (legendRectangle.minY + defaultMargin - layout.bounds.y).toFloat())
-
-            currentX += layout.bounds.width + 2 * defaultMargin
-        }
-    }
-
-    /**
      * Renders whole chart.
      */
     fun render() {
@@ -446,7 +388,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
 
         renderYAxisLabels()
         renderXAxisLabels()
-        renderGrid()
+        renderGrid(gridRectangle, valuesAxisLabels.size, style.orientation, SVGCanvas)
 
         setBarsRectanglesAndColors()
 
@@ -455,6 +397,6 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
             HORIZONTAL -> renderHorizontalBars()
         }
 
-        renderLegend()
+        renderLegend(style.displayLegend, columnsLabelsLayouts, columnsColors, legendRectangle, SVGCanvas)
     }
 }

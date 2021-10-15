@@ -48,7 +48,6 @@ data class HistogramChart(val data: HistogramChartData, val style: HistogramChar
             data.getBarChartData(),
             BarChartStyle(
                 size = style.size,
-                gridColor = style.gridColor,
                 barColors = listOf(style.barColor),
                 displayLegend = false,
                 barWidthRate = 1.0
