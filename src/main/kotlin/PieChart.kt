@@ -75,16 +75,17 @@ data class PieChart(val data: PieChartData, val style: PieChartStyle, val SVGCan
      * Renders title and calculates title rectangle.
      */
     fun renderTitleSetTitleRectangle() {
-        val titleLayout = TextLayout(data.chartTitle, titleFont, SVGCanvas.fontRenderContext)
-
         titleRectangle.apply {
             x = defaultMargin
             y = defaultMargin
             width = style.size.width.toDouble() - 2 * defaultMargin
-            height = if (data.chartTitle.isEmpty()) 0.0 else 2 * defaultMargin + titleLayout.bounds.height
+            height = 0.0
         }
 
         if (data.chartTitle.isNotEmpty()) {
+            val titleLayout = TextLayout(data.chartTitle, titleFont, SVGCanvas.fontRenderContext)
+            titleRectangle.height = 2 * defaultMargin + titleLayout.bounds.height
+
             titleLayout.draw(
                 SVGCanvas, (titleRectangle.centerX - (titleLayout.bounds.width / 2.0) - titleLayout.bounds.x).toFloat(),
                 (titleRectangle.centerY - (titleLayout.bounds.height / 2.0) - titleLayout.bounds.y).toFloat()
