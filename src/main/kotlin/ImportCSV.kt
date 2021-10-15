@@ -25,15 +25,15 @@ fun parseCSVBarChartData(CSVFile: File, extractRowsLabels: Boolean, extractColum
     if (data.any { it.isEmpty() }) {
         return null
     }
-    val columnsLabels: List<String> = if (extractRowsLabels) {
-        data[0].drop(1).map { if (it == "") " " else it }
+    val columnsLabels: List<String> = if (extractColumnsLabels) {
+        data[0].drop(if (extractRowsLabels) 1 else 0).map { if (it == "") " " else it }
     } else {
-        List(data[0].size) { index -> "Input ${index + 1}" }
+        List(data[0].size - if (extractRowsLabels) 1 else 0) { index -> "Input ${index + 1}" }
     }
-    val rowsLabels: List<String> = if (extractColumnsLabels) {
-        data.map { it[0] }.drop(1).map { if (it == "") " " else it }
+    val rowsLabels: List<String> = if (extractRowsLabels) {
+        data.map { it[0] }.drop(if (extractColumnsLabels) 1 else 0).map { if (it == "") " " else it }
     } else {
-        List(data.size) { index -> "Series ${index + 1}" }
+        List(data.size - if (extractColumnsLabels) 1 else 0) { index -> "Series ${index + 1}" }
     }
 
     val valuesInString = data.drop(if (extractColumnsLabels) 1 else 0).map { it.drop(if (extractRowsLabels) 1 else 0) }
@@ -42,7 +42,7 @@ fun parseCSVBarChartData(CSVFile: File, extractRowsLabels: Boolean, extractColum
         return null
     }
 
-    val format = NumberFormat.getInstance(Locale.getDefault())
+    val format = NumberFormat.getInstance(Locale.forLanguageTag("ru-RU"))
     val valuesInDouble: List<List<Double>>
     try {
         valuesInDouble = valuesInString.map { it.map { format.parse(it.trim()).toDouble() } }
