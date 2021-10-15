@@ -24,7 +24,7 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 class Viz : CliktCommand() {
-    val outputFile: File by option("-o", "--output", help = "the name of the output file").file(canBeDir = false, canBeSymlink = false, mustBeWritable = true).default(File("output.svg"))
+    val outputFile: File by option("-o", "--output", help = "the name of the output file").file(canBeDir = false, canBeSymlink = false, mustBeReadable = true, mustBeWritable = true).default(File("output.svg"))
     val inputFile: File by option("-d", "--data", help = "the name of the data file (in CSV format)").file(canBeDir = false, canBeSymlink = false, mustExist = true, mustBeReadable = true).required()
     val styleFile: File? by option("-y", "--style", help = "the name of the style file (in JSON format)").file(canBeDir = false, canBeSymlink = false, mustExist = true, mustBeReadable = true)
     val chartSize: Pair<Int, Int> by option("-s", "--size", help = "dimensions of the output file: first width, then height").int().pair().default(Pair(800, 600))
@@ -42,7 +42,8 @@ class Viz : CliktCommand() {
             return
         }
 
-        val SVGChart = getEmptyChart()
+        val size = Size(chartSize.first, chartSize.second)
+        val SVGChart = getEmptyChart(size)
 
         when (chartType) {
             "bar" -> {
@@ -64,7 +65,7 @@ class Viz : CliktCommand() {
                         parsedCSV.values,
                         10
                     ),
-                    HistogramChartStyle(size = Size(chartSize.first, chartSize.second)),
+                    HistogramChartStyle(size = size),
                     SVGChart.SVGCanvas
                 ).render()
             }
@@ -75,15 +76,21 @@ class Viz : CliktCommand() {
                         parsedCSV.columnsLabels,
                         parsedCSV.values
                     ),
-                    PieChartStyle(size = Size(chartSize.first, chartSize.second)),
+                    PieChartStyle(size = size),
                     SVGChart.SVGCanvas
                 ).render()
             }
         }
 
-        SVGChart.SVGCanvas.stream(outputFile.absolutePath)
+        val outSVGName = "${outputFile.nameWithoutExtension}.svg"
+        val outPNGName = "${outputFile.nameWithoutExtension}.png"
+        SVGChart.SVGCanvas.stream(outSVGName)
 
-        createWindow("pf-2021-viz", outputFile.absolutePath)
+        if (renderPNG) {
+            rasterize(outSVGName, outPNGName, size)
+        }
+
+        createWindow("pf-2021-viz", outSVGName)
     }
 }
 
@@ -115,7 +122,7 @@ class SVGApplication(val frame: JFrame) {
     val label = JLabel()
 
     /**
-     * Widget that renders SVG provided by the Apache Batik library
+     * Widget that renders SVG. Provided by the Apache Batik library
      */
     val svgCanvas = JSVGCanvas()
 
