@@ -33,7 +33,7 @@ class Viz : CliktCommand() {
     val renderPNG: Boolean by option("-p", "--PNG", help = "render PNG, if this option is present").flag()
     val extractRowsLabels: Boolean by option("-r", "--rows-labels", help = "treat first column as labels for rows in CSV").flag()
     val extractColumnLabels: Boolean by option("-c", "--columns-labels", help = "treat first row as labels for columns in CSV").flag()
-    val chartType: String by option("-t", "--type", help = "the type of the chart").choice("bar", "histogram", "pie").required()
+    val chartType: String by option("-t", "--type", help = "the type of the chart").choice("bar", "histogram", "pie", "scatter").required()
     val chartTitle: String? by option("--title", help = "set the chart title")
 
     override fun run() {
@@ -79,6 +79,16 @@ class Viz : CliktCommand() {
                         parsedCSV.values
                     ),
                     PieChartStyle(size = size),
+                    SVGChart.SVGCanvas
+                ).render()
+            }
+            "scatter" -> {
+                ScatterChart(
+                    ScatterChartData(
+                        chartTitle ?: "",
+                        parsedCSV.values
+                    ),
+                    ScatterChartStyle(size = size),
                     SVGChart.SVGCanvas
                 ).render()
             }

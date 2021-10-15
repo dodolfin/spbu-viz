@@ -1,5 +1,6 @@
 import java.awt.Color
 import java.awt.Dimension
+import java.awt.Font
 
 /**
  * Default value of indentation (in pixels)
@@ -7,9 +8,25 @@ import java.awt.Dimension
 const val defaultMargin = 5.0
 
 /**
+ * Default stroke color.
+ */
+val strokeColor = Color.BLACK
+
+/**
+ * Default grid color
+ */
+val gridColor: Color = Color.LIGHT_GRAY
+
+/**
+ * [titleFont] and [labelFont] store fonts for title and all other text on the chart respectively.
+ */
+val titleFont = Font("Arial", Font.PLAIN, 36)
+val labelFont = Font("Arial", Font.PLAIN, 14)
+
+/**
  * Bars can be placed either vertically or horizontally
  */
-enum class BarChartOrientation {
+enum class Orientation {
     VERTICAL, HORIZONTAL
 }
 
@@ -26,9 +43,8 @@ enum class BarChartMultipleValuesDisplay {
  */
 data class BarChartStyle(
     val size: Dimension = Dimension(800, 600),
-    val orientation: BarChartOrientation = BarChartOrientation.VERTICAL,
+    val orientation: Orientation = Orientation.VERTICAL,
     val multipleValuesDisplay: BarChartMultipleValuesDisplay = BarChartMultipleValuesDisplay.CLUSTERED,
-    val gridColor: Color = Color.LIGHT_GRAY,
     val barColors: List<Color> = listOf(Color.MAGENTA, Color.RED, Color.PINK, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.DARK_GRAY),
     val displayLegend: Boolean = true,
     val barWidthRate: Double = 0.8
@@ -36,7 +52,6 @@ data class BarChartStyle(
 
 data class HistogramChartStyle(
     val size: Dimension = Dimension(800, 600),
-    val gridColor: Color = Color.LIGHT_GRAY,
     val barColor: Color = Color.BLUE
 )
 
@@ -44,4 +59,10 @@ data class PieChartStyle(
     val size: Dimension = Dimension(800, 600),
     val sectorsColors: List<Color> = listOf(Color.MAGENTA, Color.RED, Color.PINK, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.DARK_GRAY),
     val displayLegend: Boolean = true
+)
+
+data class ScatterChartStyle(
+    val size: Dimension = Dimension(800, 600),
+    val dotsColor: Color = Color.GREEN,
+    val pointRadius: Double = 4.0
 )
