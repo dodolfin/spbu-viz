@@ -18,6 +18,43 @@ fun getTenPowers(maxValue: Double, logDelta: Double): List<Double> {
     return result
 }
 
+/**
+ * Return delta between two consecutive numbers from the output of [getLinearInterpolation] function.
+ */
+fun getLinearInterpolationDelta(start: Double, end: Double, steps: Int): Double = (end - start) / (steps - 1)
+
+/**
+ * Return [steps] values that match this pattern: start, start + delta, start + 2 * delta, ..., finish
+ */
+fun getLinearInterpolation(start: Double, end: Double, steps: Int): List<Double> {
+    val delta = getLinearInterpolationDelta(start, end, steps)
+    val res = mutableListOf<Double>()
+
+    for (i in 0 until steps) {
+        res.add(start + i.toDouble() * delta)
+    }
+
+    return res
+}
+
+/**
+ * Return delta between two consecutive numbers from the output of [getLinearInterpolationMiddles] function.
+ */
+fun getLinearInterpolationMiddlesDelta(start: Double, end: Double, steps: Int): Double = (end - start) / (steps)
+
+/**
+ * Return [steps] values that match this pattern: start + 0.5 * delta, start + 1.5 * delta, ..., finish - 0.5 * delta
+ */
+fun getLinearInterpolationMiddles(start: Double, end: Double, steps: Int): List<Double> {
+    val delta = getLinearInterpolationMiddlesDelta(start, end, steps)
+    val res = mutableListOf<Double>()
+
+    for (i in 0 until steps) {
+        res.add(start + (i.toDouble() + 0.5) * delta)
+    }
+
+    return res
+}
 
 /**
  * Renders grid (those light gray lines that help you estimate the value that bar represents)
