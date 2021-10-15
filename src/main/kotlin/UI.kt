@@ -83,6 +83,11 @@ class Viz : CliktCommand() {
                 ).render()
             }
             "scatter" -> {
+                if (parsedCSV.values.any { it.size < 2 }) {
+                    println("Malformed input file.")
+                    return
+                }
+
                 ScatterChart(
                     ScatterChartData(
                         chartTitle ?: "",

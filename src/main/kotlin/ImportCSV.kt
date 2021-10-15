@@ -19,12 +19,12 @@ fun parseCSVBarChartData(CSVFile: File, extractRowsLabels: Boolean, extractColum
         return null
     }
     val columnsLabels: List<String> = if (extractRowsLabels) {
-        data[0].drop(1)
+        data[0].drop(1).map { if (it == "") " " else it }
     } else {
         List(data[0].size) { index -> "Input ${index + 1}" }
     }
     val rowsLabels: List<String> = if (extractColumnsLabels) {
-        data.map { it[0] }.drop(1)
+        data.map { it[0] }.drop(1).map { if (it == "") " " else it }
     } else {
         List(data.size) { index -> "Series ${index + 1}"}
     }
