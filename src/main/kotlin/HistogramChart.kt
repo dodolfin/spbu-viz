@@ -51,7 +51,7 @@ data class HistogramChart(val data: HistogramChartData, val style: HistogramChar
                 gridColor = style.gridColor,
                 barColors = listOf(style.barColor),
                 displayLegend = false,
-                barWidthRate = 0.0
+                barWidthRate = 1.0
             ),
             SVGCanvas
         ).render()
