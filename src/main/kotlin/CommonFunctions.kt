@@ -85,14 +85,21 @@ fun renderGrid(gridRectangle: Rectangle2D, numberOfLines: Int, orientation: Orie
 /**
  * Renders legend if [displayLegend] is true.
  */
-fun renderLegend(displayLegend: Boolean, columnsLabelsLayouts: List<TextLayout>, columnsColors: List<Color>, legendRectangle: Rectangle2D, SVGCanvas: SVGCanvas) {
+fun renderLegend(
+    displayLegend: Boolean,
+    columnsLabelsLayouts: List<TextLayout>,
+    columnsColors: List<Color>,
+    legendRectangle: Rectangle2D,
+    SVGCanvas: SVGCanvas
+) {
     if (!displayLegend) {
         return
     }
 
     val n = columnsLabelsLayouts.size.toDouble()
     val legendHeight = columnsLabelsLayouts.maxOf { it.bounds.height }
-    val legendWidth = n * legendHeight + columnsLabelsLayouts.sumOf { it.bounds.width } + (2 * (n - 1) + n) * defaultMargin
+    val legendWidth =
+        n * legendHeight + columnsLabelsLayouts.sumOf { it.bounds.width } + (2 * (n - 1) + n) * defaultMargin
     var currentX = legendRectangle.centerX - (legendWidth / 2.0)
     columnsLabelsLayouts.zip(columnsColors).forEach { (layout, color) ->
         val colorSquare = Rectangle2D.Double(currentX, legendRectangle.minY + defaultMargin, legendHeight, legendHeight)
@@ -104,7 +111,11 @@ fun renderLegend(displayLegend: Boolean, columnsLabelsLayouts: List<TextLayout>,
 
         currentX += legendHeight + defaultMargin
 
-        layout.draw(SVGCanvas, (currentX - layout.bounds.x).toFloat(), (legendRectangle.minY + defaultMargin - layout.bounds.y).toFloat())
+        layout.draw(
+            SVGCanvas,
+            (currentX - layout.bounds.x).toFloat(),
+            (legendRectangle.minY + defaultMargin - layout.bounds.y).toFloat()
+        )
 
         currentX += layout.bounds.width + 2 * defaultMargin
     }

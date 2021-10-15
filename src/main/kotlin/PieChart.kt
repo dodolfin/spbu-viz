@@ -1,5 +1,4 @@
 import java.awt.Color
-import java.awt.Font
 import java.awt.font.TextLayout
 import java.awt.geom.Arc2D
 import java.awt.geom.Rectangle2D
@@ -142,7 +141,15 @@ data class PieChart(val data: PieChartData, val style: PieChartStyle, val SVGCan
         var currentAngle = 90.0
         firstRow.zip(columnsColors).reversed().forEach { (cell, color) ->
             val cellAngle = (cell / dataSum) * (360.0)
-            val arc = Arc2D.Double(pieRectangle.x, pieRectangle.y, pieRectangle.width, pieRectangle.height, currentAngle, cellAngle, Arc2D.PIE)
+            val arc = Arc2D.Double(
+                pieRectangle.x,
+                pieRectangle.y,
+                pieRectangle.width,
+                pieRectangle.height,
+                currentAngle,
+                cellAngle,
+                Arc2D.PIE
+            )
 
             SVGCanvas.color = color
             SVGCanvas.fill(arc)

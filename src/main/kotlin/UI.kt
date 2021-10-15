@@ -29,14 +29,44 @@ import kotlin.system.exitProcess
  * Represents the whole CLI interface with all options available. Clikt magic.
  */
 class Viz : CliktCommand() {
-    val outputFile: File by option("-o", "--output", help = "the name of the output file").file(canBeDir = false, canBeSymlink = false, mustBeReadable = true, mustBeWritable = true).default(File("output.svg"))
-    val inputFile: File by option("-d", "--data", help = "the name of the data file (in CSV format)").file(canBeDir = false, canBeSymlink = false, mustExist = true, mustBeReadable = true).required()
-    val styleFile: File? by option("-y", "--style", help = "the name of the style file (in JSON format)").file(canBeDir = false, canBeSymlink = false, mustExist = true, mustBeReadable = true)
-    val chartSize: Pair<Int, Int> by option("-s", "--size", help = "dimensions of the output file: first width, then height").int().pair().default(Pair(800, 600))
+    val outputFile: File by option("-o", "--output", help = "the name of the output file").file(
+        canBeDir = false,
+        canBeSymlink = false,
+        mustBeReadable = true,
+        mustBeWritable = true
+    ).default(File("output.svg"))
+    val inputFile: File by option(
+        "-d",
+        "--data",
+        help = "the name of the data file (in CSV format)"
+    ).file(canBeDir = false, canBeSymlink = false, mustExist = true, mustBeReadable = true).required()
+    val styleFile: File? by option(
+        "-y",
+        "--style",
+        help = "the name of the style file (in JSON format)"
+    ).file(canBeDir = false, canBeSymlink = false, mustExist = true, mustBeReadable = true)
+    val chartSize: Pair<Int, Int> by option(
+        "-s",
+        "--size",
+        help = "dimensions of the output file: first width, then height"
+    ).int().pair().default(Pair(800, 600))
     val renderPNG: Boolean by option("-p", "--PNG", help = "render PNG, if this option is present").flag()
-    val extractRowsLabels: Boolean by option("-r", "--rows-labels", help = "treat first column as labels for rows in CSV").flag()
-    val extractColumnLabels: Boolean by option("-c", "--columns-labels", help = "treat first row as labels for columns in CSV").flag()
-    val chartType: String by option("-t", "--type", help = "the type of the chart").choice("bar", "histogram", "pie", "scatter").required()
+    val extractRowsLabels: Boolean by option(
+        "-r",
+        "--rows-labels",
+        help = "treat first column as labels for rows in CSV"
+    ).flag()
+    val extractColumnLabels: Boolean by option(
+        "-c",
+        "--columns-labels",
+        help = "treat first row as labels for columns in CSV"
+    ).flag()
+    val chartType: String by option("-t", "--type", help = "the type of the chart").choice(
+        "bar",
+        "histogram",
+        "pie",
+        "scatter"
+    ).required()
     val chartTitle: String? by option("--title", help = "set the chart title")
 
     override fun run() {

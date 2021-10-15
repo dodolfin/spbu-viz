@@ -1,7 +1,6 @@
 import java.awt.font.TextLayout
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
-import kotlin.math.*
 
 /**
  * The data for rendering chart itself. [values] stores the 2D table with data (as in Excel). Only the first two columns
@@ -130,22 +129,26 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
      * Renders Y (vertical) axis labels.
      */
     fun renderYAxisLabels() {
-        yAxisLabelsLayouts.zip(getLinearInterpolation(gridRectangle.minY, gridRectangle.maxY, yAxisLabels.size)).forEach { (layout, y) ->
-            layout.draw(SVGCanvas, (gridRectangle.minX - layout.bounds.width - layout.bounds.x - defaultMargin).toFloat(),
-                (y - (layout.bounds.y / 2.0)).toFloat()
-            )
-        }
+        yAxisLabelsLayouts.zip(getLinearInterpolation(gridRectangle.minY, gridRectangle.maxY, yAxisLabels.size))
+            .forEach { (layout, y) ->
+                layout.draw(
+                    SVGCanvas, (gridRectangle.minX - layout.bounds.width - layout.bounds.x - defaultMargin).toFloat(),
+                    (y - (layout.bounds.y / 2.0)).toFloat()
+                )
+            }
     }
 
     /**
      * Renders X (horizontal) axis labels.
      */
     fun renderXAxisLabels() {
-        xAxisLabelsLayouts.zip(getLinearInterpolation(gridRectangle.minX, gridRectangle.maxX, xAxisLabels.size)).forEach { (layout, x) ->
-            layout.draw(SVGCanvas, (x - (layout.bounds.width / 2.0) - layout.bounds.x).toFloat(),
-                (gridRectangle.maxY - layout.bounds.y + defaultMargin).toFloat()
-            )
-        }
+        xAxisLabelsLayouts.zip(getLinearInterpolation(gridRectangle.minX, gridRectangle.maxX, xAxisLabels.size))
+            .forEach { (layout, x) ->
+                layout.draw(
+                    SVGCanvas, (x - (layout.bounds.width / 2.0) - layout.bounds.x).toFloat(),
+                    (gridRectangle.maxY - layout.bounds.y + defaultMargin).toFloat()
+                )
+            }
     }
 
     /**

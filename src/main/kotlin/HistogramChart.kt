@@ -27,8 +27,16 @@ data class HistogramChartData(
                 val leftBound = value
                 val rightBound = value + rangeLength
 
-                values.add(firstColumn.count { it >= leftBound && (it < rightBound || (index == this.lastIndex && it <= rightBound)) }.toDouble())
-                rowsTitles.add("[${String.format("%.3f", leftBound)}, ${String.format("%.3f", rightBound)}${if (index != this.lastIndex) ")" else "]"}")
+                values.add(firstColumn.count { it >= leftBound && (it < rightBound || (index == this.lastIndex && it <= rightBound)) }
+                    .toDouble())
+                rowsTitles.add(
+                    "[${String.format("%.3f", leftBound)}, ${
+                        String.format(
+                            "%.3f",
+                            rightBound
+                        )
+                    }${if (index != this.lastIndex) ")" else "]"}"
+                )
             }
         }
 

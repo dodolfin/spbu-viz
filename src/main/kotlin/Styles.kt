@@ -45,7 +45,17 @@ data class BarChartStyle(
     val size: Dimension = Dimension(800, 600),
     val orientation: Orientation = Orientation.VERTICAL,
     val multipleValuesDisplay: BarChartMultipleValuesDisplay = BarChartMultipleValuesDisplay.CLUSTERED,
-    val barColors: List<Color> = listOf(Color.MAGENTA, Color.RED, Color.PINK, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.DARK_GRAY),
+    val barColors: List<Color> = listOf(
+        Color.MAGENTA,
+        Color.RED,
+        Color.PINK,
+        Color.ORANGE,
+        Color.YELLOW,
+        Color.GREEN,
+        Color.CYAN,
+        Color.BLUE,
+        Color.DARK_GRAY
+    ),
     val displayLegend: Boolean = true,
     val barWidthRate: Double = 0.8
 )
@@ -63,7 +73,17 @@ data class HistogramChartStyle(
  */
 data class PieChartStyle(
     val size: Dimension = Dimension(800, 600),
-    val sectorsColors: List<Color> = listOf(Color.MAGENTA, Color.RED, Color.PINK, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.DARK_GRAY),
+    val sectorsColors: List<Color> = listOf(
+        Color.MAGENTA,
+        Color.RED,
+        Color.PINK,
+        Color.ORANGE,
+        Color.YELLOW,
+        Color.GREEN,
+        Color.CYAN,
+        Color.BLUE,
+        Color.DARK_GRAY
+    ),
     val displayLegend: Boolean = true
 )
 
