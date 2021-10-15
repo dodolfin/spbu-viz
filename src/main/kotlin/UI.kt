@@ -32,8 +32,6 @@ class Viz : CliktCommand() {
     val outputFile: File by option("-o", "--output", help = "The name of the output file").file(
         canBeDir = false,
         canBeSymlink = false,
-        mustBeReadable = true,
-        mustBeWritable = true
     ).default(File("output.svg"))
     val inputFile: File by option(
         "-d",
@@ -62,6 +60,7 @@ class Viz : CliktCommand() {
         "pie",
         "scatter"
     ).required()
+    val dontShowWindow: Boolean by option("-m", "--minimize", help = "Don't show window with SVG").flag()
     val chartTitle: String? by option("--title", help = "Set the chart title")
 
     override fun run() {
@@ -136,7 +135,9 @@ class Viz : CliktCommand() {
             rasterize(outSVGName, outPNGName, size)
         }
 
-        createWindow("pf-2021-viz", outSVGName, size)
+        if (!dontShowWindow) {
+            createWindow("pf-2021-viz", outSVGName, size)
+        }
     }
 }
 
