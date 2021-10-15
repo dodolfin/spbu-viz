@@ -14,6 +14,7 @@ import org.apache.batik.swing.svg.GVTTreeBuilderEvent
 import org.apache.batik.swing.svg.SVGDocumentLoaderAdapter
 import org.apache.batik.swing.svg.SVGDocumentLoaderEvent
 import java.awt.BorderLayout
+import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
@@ -22,6 +23,7 @@ import javax.swing.JComponent
 import javax.swing.JFrame
 import javax.swing.JLabel
 import javax.swing.JPanel
+import kotlin.system.exitProcess
 
 class Viz : CliktCommand() {
     val outputFile: File by option("-o", "--output", help = "the name of the output file").file(canBeDir = false, canBeSymlink = false, mustBeReadable = true, mustBeWritable = true).default(File("output.svg"))
@@ -84,20 +86,21 @@ class Viz : CliktCommand() {
 
         val outSVGName = "${outputFile.nameWithoutExtension}.svg"
         val outPNGName = "${outputFile.nameWithoutExtension}.png"
+
         SVGChart.SVGCanvas.stream(outSVGName)
 
         if (renderPNG) {
             rasterize(outSVGName, outPNGName, size)
         }
 
-        createWindow("pf-2021-viz", outSVGName)
+        createWindow("pf-2021-viz", outSVGName, size)
     }
 }
 
 /**
  * Magic function that creates window.
  */
-fun createWindow(title: String, filename: String) = runBlocking(Dispatchers.Swing) {
+fun createWindow(title: String, filename: String, size: Dimension) = runBlocking(Dispatchers.Swing) {
     val f = JFrame(title)
     val app = SVGApplication(f)
 
@@ -105,10 +108,10 @@ fun createWindow(title: String, filename: String) = runBlocking(Dispatchers.Swin
 
     f.addWindowListener(object : WindowAdapter() {
         override fun windowClosing(e: WindowEvent) {
-            System.exit(0)
+            exitProcess(0)
         }
     })
-    f.setSize(1024, 768)
+    f.setSize(size.width, size.height)
     f.isVisible = true
 }
 
@@ -155,7 +158,6 @@ class SVGApplication(val frame: JFrame) {
 
             override fun gvtBuildCompleted(e: GVTTreeBuilderEvent) {
                 label.text = "Build Done."
-                frame.pack()
             }
         })
         svgCanvas.addGVTTreeRendererListener(object : GVTTreeRendererAdapter() {

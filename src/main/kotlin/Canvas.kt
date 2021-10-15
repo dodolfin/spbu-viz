@@ -33,10 +33,10 @@ fun getEmptyChart(size: Dimension): SVGChart {
     val document = domImpl.createDocument(svgNS, "svg", null)
 
     val SVGCanvas = SVGCanvas(document)
-    SVGCanvas.svgCanvasSize = Dimension(size.width, size.height)
+    SVGCanvas.svgCanvasSize = Dimension(size.width + defaultMargin.toInt(), size.height + defaultMargin.toInt())
 
     // Return an instance of the SVGChart
-    return SVGChart(document, SVGCanvas(document))
+    return SVGChart(document, SVGCanvas)
 }
 
 fun rasterize(inputFilename: String, outputFilename: String, size: Dimension) {
