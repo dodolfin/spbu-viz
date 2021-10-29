@@ -117,10 +117,7 @@ data class PieChart(val data: PieChartData, val style: PieChartStyle, val SVGCan
                 Arc2D.PIE
             )
 
-            SVGCanvas.color = color
-            SVGCanvas.fill(arc)
-            SVGCanvas.color = Color.BLACK
-            SVGCanvas.draw(arc)
+            renderShapeWithOutline(arc, color, SVGCanvas)
 
             currentAngle += cellAngle
         }

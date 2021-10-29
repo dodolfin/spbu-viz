@@ -189,10 +189,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
                             val barRectangle =
                                 Rectangle2D.Double(x, gridRectangle.maxY - barHeight, oneBarWidth, barHeight)
 
-                            SVGCanvas.color = columnsColors[rowIndex]
-                            SVGCanvas.fill(barRectangle)
-                            SVGCanvas.color = Color.BLACK
-                            SVGCanvas.draw(barRectangle)
+                            renderShapeWithOutline(barRectangle, columnsColors[rowIndex], SVGCanvas)
                         }
                 }
             }
@@ -205,10 +202,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
                         val barHeight = rect.height * (cell / gridMaxValue)
                         val barRectangle = Rectangle2D.Double(rect.x, currentMaxY - barHeight, rect.width, barHeight)
 
-                        SVGCanvas.color = columnsColors[rowIndex]
-                        SVGCanvas.fill(barRectangle)
-                        SVGCanvas.color = Color.BLACK
-                        SVGCanvas.draw(barRectangle)
+                        renderShapeWithOutline(barRectangle, columnsColors[rowIndex], SVGCanvas)
 
                         currentMaxY -= barHeight
                     }
@@ -231,10 +225,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
                             val barWidth = rect.width * (row[rowIndex] / gridMaxValue)
                             val barRectangle = Rectangle2D.Double(gridRectangle.minX, y, barWidth, oneBarHeight)
 
-                            SVGCanvas.color = columnsColors[rowIndex]
-                            SVGCanvas.fill(barRectangle)
-                            SVGCanvas.color = Color.BLACK
-                            SVGCanvas.draw(barRectangle)
+                            renderShapeWithOutline(barRectangle, columnsColors[rowIndex], SVGCanvas)
                         }
                 }
             }
@@ -247,10 +238,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
                         val barWidth = rect.width * (cell / gridMaxValue)
                         val barRectangle = Rectangle2D.Double(currentMinX, rect.y, barWidth, rect.height)
 
-                        SVGCanvas.color = columnsColors[rowIndex]
-                        SVGCanvas.fill(barRectangle)
-                        SVGCanvas.color = Color.BLACK
-                        SVGCanvas.draw(barRectangle)
+                        renderShapeWithOutline(barRectangle, columnsColors[rowIndex], SVGCanvas)
 
                         currentMinX += barWidth
                     }

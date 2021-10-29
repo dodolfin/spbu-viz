@@ -1,5 +1,6 @@
 import java.awt.Color
 import java.awt.Dimension
+import java.awt.Shape
 import java.awt.font.TextLayout
 import java.awt.geom.Line2D
 import java.awt.geom.Rectangle2D
@@ -7,6 +8,13 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
+
+fun renderShapeWithOutline(shape: Shape, fillColor: Color, SVGCanvas: SVGCanvas) {
+    SVGCanvas.color = fillColor
+    SVGCanvas.fill(shape)
+    SVGCanvas.color = strokeColor
+    SVGCanvas.draw(shape)
+}
 
 /**
  * For segment [0, maxValue] returns a list containing labels for values axis.

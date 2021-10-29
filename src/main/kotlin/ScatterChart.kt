@@ -121,10 +121,7 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
 
             val point = Ellipse2D.Double(pointX - radius, pointY - radius, 2 * radius, 2 * radius)
 
-            SVGCanvas.color = style.dotsColor
-            SVGCanvas.fill(point)
-            SVGCanvas.color = strokeColor
-            SVGCanvas.draw(point)
+            renderShapeWithOutline(point, style.dotsColor, SVGCanvas)
         }
     }
 
