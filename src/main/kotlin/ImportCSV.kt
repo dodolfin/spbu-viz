@@ -17,7 +17,12 @@ data class ParsedCSV(
  * Returns ParsedCSV, if the parsing was successful. Returns null otherwise.
  */
 fun parseCSV(CSVFile: File, extractRowsLabels: Boolean, extractColumnsLabels: Boolean): ParsedCSV? {
-    val data = csvReader { delimiter = ';' }.readAll(CSVFile)
+    val data: List<List<String>>
+    try {
+        data = csvReader { delimiter = ';' }.readAll(CSVFile)
+    } catch (exception: Exception) {
+        return null
+    }
 
     if (data.isEmpty()) {
         return null
