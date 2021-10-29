@@ -134,10 +134,10 @@ fun getGraphRectangle(titleRectangle: Rectangle2D.Double, size: Dimension, legen
 
 fun getGridRectangle(graphRectangle: Rectangle2D.Double, xAxisLabelsLayouts: List<TextLayout>, yAxisLabelsLayouts: List<TextLayout>): Rectangle2D.Double =
     Rectangle2D.Double().apply {
-        x = graphRectangle.minX + defaultMargin + xAxisLabelsLayouts.maxOf { it.bounds.width }
+        x = graphRectangle.minX + defaultMargin + yAxisLabelsLayouts.maxOf { it.bounds.width }
         y = graphRectangle.minY + defaultMargin
-        width = graphRectangle.width - 2 * defaultMargin - xAxisLabelsLayouts.maxOf { it.bounds.width }
-        height = graphRectangle.height - 2 * defaultMargin - yAxisLabelsLayouts.maxOf { it.bounds.height }
+        width = graphRectangle.width - 2 * defaultMargin - yAxisLabelsLayouts.maxOf { it.bounds.width }
+        height = graphRectangle.height - 2 * defaultMargin - xAxisLabelsLayouts.maxOf { it.bounds.height }
     }
 
 /**

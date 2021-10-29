@@ -133,7 +133,7 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
 
         generateValuesLabels()
         generateAllLabelsLayouts()
-        graphRectangle = getGraphRectangle(titleRectangle, style.size, Rectangle2D.Double())
+        graphRectangle = getGraphRectangle(titleRectangle, style.size, Rectangle2D.Double(defaultMargin, style.size.height - defaultMargin, 0.0, 0.0))
         gridRectangle = getGridRectangle(graphRectangle, xAxisLabelsLayouts, yAxisLabelsLayouts)
 
         renderYAxisLabels()
