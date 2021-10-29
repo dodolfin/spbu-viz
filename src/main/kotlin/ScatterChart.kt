@@ -21,8 +21,8 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
      * parts of the chart are rendered (with [defaultMargin] indentation)
      */
     val titleRectangle = getTitleRectangle(data.chartTitle, style.size.width, SVGCanvas)
-    val graphRectangle = Rectangle2D.Double()
-    val gridRectangle = Rectangle2D.Double()
+    var graphRectangle = Rectangle2D.Double()
+    var gridRectangle = Rectangle2D.Double()
 
     /**
      * [xAxisLabels] and [yAxisLabels] stores labels upon which grid is drawn.
@@ -85,25 +85,6 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
     }
 
     /**
-     * Calculates graph and grid rectangles. Graph rectangle includes grid, and both axes labels.
-     */
-    fun setGraphAndGridRectangle() {
-        graphRectangle.apply {
-            x = defaultMargin
-            y = titleRectangle.maxY
-            width = style.size.width.toDouble() - 2 * defaultMargin
-            height = style.size.height - defaultMargin - titleRectangle.maxY
-        }
-
-        gridRectangle.apply {
-            x = graphRectangle.minX + defaultMargin + yAxisLabelsLayouts.maxOf { it.bounds.width }
-            y = graphRectangle.minY + defaultMargin
-            width = graphRectangle.width - 2 * defaultMargin - yAxisLabelsLayouts.maxOf { it.bounds.width }
-            height = graphRectangle.height - 2 * defaultMargin - xAxisLabelsLayouts.maxOf { it.bounds.height }
-        }
-    }
-
-    /**
      * Renders Y (vertical) axis labels.
      */
     fun renderYAxisLabels() {
@@ -155,7 +136,8 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
 
         generateValuesLabels()
         generateAllLabelsLayouts()
-        setGraphAndGridRectangle()
+        graphRectangle = getGraphRectangle(titleRectangle, style.size, Rectangle2D.Double())
+        gridRectangle = getGridRectangle(graphRectangle, xAxisLabelsLayouts, yAxisLabelsLayouts)
 
         renderYAxisLabels()
         renderXAxisLabels()

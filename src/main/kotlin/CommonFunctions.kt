@@ -116,6 +116,22 @@ fun renderGrid(gridRectangle: Rectangle2D, numberOfLines: Int, orientation: Orie
     }
 }
 
+fun getGraphRectangle(titleRectangle: Rectangle2D.Double, size: Dimension, legendRectangle: Rectangle2D.Double): Rectangle2D.Double =
+    Rectangle2D.Double().apply {
+        x = defaultMargin
+        y = titleRectangle.maxY
+        width = size.width.toDouble() - 2 * defaultMargin
+        height = legendRectangle.minY - titleRectangle.maxY
+    }
+
+fun getGridRectangle(graphRectangle: Rectangle2D.Double, xAxisLabelsLayouts: List<TextLayout>, yAxisLabelsLayouts: List<TextLayout>): Rectangle2D.Double =
+    Rectangle2D.Double().apply {
+        x = graphRectangle.minX + defaultMargin + xAxisLabelsLayouts.maxOf { it.bounds.width }
+        y = graphRectangle.minY + defaultMargin
+        width = graphRectangle.width - 2 * defaultMargin - xAxisLabelsLayouts.maxOf { it.bounds.width }
+        height = graphRectangle.height - 2 * defaultMargin - yAxisLabelsLayouts.maxOf { it.bounds.height }
+    }
+
 /**
  * Returns legend rectangle.
  */
