@@ -92,6 +92,6 @@ data class PieChartStyle(
  */
 data class ScatterChartStyle(
     val size: Dimension = Dimension(800, 600),
-    val dotsColor: Color = Color.GREEN,
+    val pointsColor: Color = Color.GREEN,
     val pointRadius: Double = 4.0
 )
