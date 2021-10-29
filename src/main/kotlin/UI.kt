@@ -67,7 +67,7 @@ class Viz : CliktCommand() {
     val chartTitle: String? by option("--title", help = "Set the chart title")
 
     override fun run() {
-        val parsedCSV = parseCSVBarChartData(inputFile, extractRowsLabels, extractColumnLabels)
+        val parsedCSV = parseCSV(inputFile, extractRowsLabels, extractColumnLabels)
 
         if (parsedCSV == null) {
             println("Malformed input file.")

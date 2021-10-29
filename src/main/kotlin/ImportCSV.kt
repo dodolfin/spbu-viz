@@ -16,7 +16,7 @@ data class ParsedCSV(
 /**
  * Returns ParsedCSV, if the parsing was successful. Returns null otherwise.
  */
-fun parseCSVBarChartData(CSVFile: File, extractRowsLabels: Boolean, extractColumnsLabels: Boolean): ParsedCSV? {
+fun parseCSV(CSVFile: File, extractRowsLabels: Boolean, extractColumnsLabels: Boolean): ParsedCSV? {
     val data = csvReader { delimiter = ';' }.readAll(CSVFile)
 
     if (data.isEmpty()) {
