@@ -12,6 +12,9 @@ CSV files should conform to format described below.
 The delimiter in CSV files should be `;` (semicolon). Any CSV files that are provided as input should have
 all cells filled (or marked as empty with semicolon following previous semicolon).
 
+To use `;` (semicolon) as a part of data cells, wrap your string with semicolon in double quotes. Example: `...;"data;with;semicolons";...`.
+`cars.csv` was updated to reflect this ("Mercedes-Benz" and "Rolls-Royce" are now "Mercedes;Benz" and "Rolls;Royce").
+
 I use term "Series" for rows of provided CSV and term "Input" for columns of provided CSV, meaning that data in same
 column is always from one input and vice versa; similar for rows.
 
@@ -70,10 +73,10 @@ Useful for rendering arbitrary functions graph.
 Only first two columns are taken; the first column represents the x coordinates of points, 
 the second column represents y coordinates.
 
-![](figures/hyperbole.png)
+![](figures/hyperbola.png)
 
-*Hyperbola (yes, there is a spelling error in source code and file names) graph*
+*Hyperbola graph*
 
 ## Testing
 Examples of CSV files and output SVGs can be found in `test_csvs`. All figures in this README.md are PNG produced 
-using these CSVs (see `figures` directory).
+using these CSVs (see `figures` directory). Run `./test.sh` to automatically generate those CSVs.
