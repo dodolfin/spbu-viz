@@ -43,6 +43,12 @@ fun parseCSV(CSVFile: File, extractRowsLabels: Boolean, extractColumnsLabels: Bo
 
     val valuesInString = data.drop(if (extractColumnsLabels) 1 else 0).map { it.drop(if (extractRowsLabels) 1 else 0) }
 
+    if (valuesInString.isEmpty()) {
+        return null
+    }
+    if (valuesInString.any { it.isEmpty() }) {
+        return null
+    }
     if (valuesInString.size != rowsLabels.size || valuesInString.any { it.size != columnsLabels.size }) {
         return null
     }
