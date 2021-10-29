@@ -132,8 +132,9 @@ class Viz : CliktCommand() {
             }
         }
 
-        val outSVGName = "${outputFile.nameWithoutExtension}.svg"
-        val outPNGName = "${outputFile.nameWithoutExtension}.png"
+        val outCommonName = "${outputFile.parent ?: ""}${if (outputFile.parent != null) "/" else ""}${outputFile.nameWithoutExtension}"
+        val outSVGName = "$outCommonName.svg"
+        val outPNGName = "$outCommonName.png"
 
         SVGChart.SVGCanvas.stream(outSVGName)
 
