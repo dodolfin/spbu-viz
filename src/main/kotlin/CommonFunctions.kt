@@ -63,6 +63,39 @@ fun getLinearInterpolationMiddles(start: Double, end: Double, steps: Int): List<
 }
 
 /**
+ * Returns [title] rectangle.
+ */
+fun getTitleRectangle(title: String, width: Int, SVGCanvas: SVGCanvas): Rectangle2D.Double {
+    val titleRectangle = Rectangle2D.Double()
+    titleRectangle.apply {
+        x = defaultMargin
+        y = defaultMargin
+        this.width = width.toDouble() - 2 * defaultMargin
+        height = 0.0
+    }
+
+    if (title.isNotEmpty()) {
+        val titleLayout = TextLayout(title, titleFont, SVGCanvas.fontRenderContext)
+        titleRectangle.height = 2 * defaultMargin + titleLayout.bounds.height
+    }
+    return titleRectangle
+}
+
+/**
+ * Renders provided [title] in provided [titleRectangle].
+ */
+fun renderTitle(title: String, titleRectangle: Rectangle2D.Double, SVGCanvas: SVGCanvas) {
+    if (title.isNotEmpty()) {
+        val titleLayout = TextLayout(title, titleFont, SVGCanvas.fontRenderContext)
+
+        titleLayout.draw(
+            SVGCanvas, (titleRectangle.centerX - (titleLayout.bounds.width / 2.0) - titleLayout.bounds.x).toFloat(),
+            (titleRectangle.centerY - (titleLayout.bounds.height / 2.0) - titleLayout.bounds.y).toFloat()
+        )
+    }
+}
+
+/**
  * Renders grid (those light gray lines that help you estimate the value that bar represents)
  */
 fun renderGrid(gridRectangle: Rectangle2D, numberOfLines: Int, orientation: Orientation, SVGCanvas: SVGCanvas) {

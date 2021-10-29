@@ -25,7 +25,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
      * [titleRectangle], [graphRectangle], [gridRectangle] and [legendRectangle] represent rectangles in which corresponding
      * parts of the chart are rendered (with [defaultMargin] indentation)
      */
-    val titleRectangle = Rectangle2D.Double()
+    val titleRectangle = getTitleRectangle(data.chartTitle, style.size.width, SVGCanvas)
     val graphRectangle = Rectangle2D.Double()
     val gridRectangle = Rectangle2D.Double()
     val legendRectangle = Rectangle2D.Double()
@@ -72,28 +72,6 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
     fun nextColor(): Int {
         colorIndex = (colorIndex + 1) % style.barColors.size
         return colorIndex
-    }
-
-    /**
-     * Renders title and calculates title rectangle.
-     */
-    fun renderTitleSetTitleRectangle() {
-        titleRectangle.apply {
-            x = defaultMargin
-            y = defaultMargin
-            width = style.size.width.toDouble() - 2 * defaultMargin
-            height = 0.0
-        }
-
-        if (data.chartTitle.isNotEmpty()) {
-            val titleLayout = TextLayout(data.chartTitle, titleFont, SVGCanvas.fontRenderContext)
-            titleRectangle.height = 2 * defaultMargin + titleLayout.bounds.height
-
-            titleLayout.draw(
-                SVGCanvas, (titleRectangle.centerX - (titleLayout.bounds.width / 2.0) - titleLayout.bounds.x).toFloat(),
-                (titleRectangle.centerY - (titleLayout.bounds.height / 2.0) - titleLayout.bounds.y).toFloat()
-            )
-        }
     }
 
     /**
@@ -384,7 +362,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
      * Renders whole chart.
      */
     fun render() {
-        renderTitleSetTitleRectangle()
+        renderTitle(data.chartTitle, titleRectangle, SVGCanvas)
 
         generateValuesLabels()
         generateAllLabelsLayouts()

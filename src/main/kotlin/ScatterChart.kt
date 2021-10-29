@@ -20,7 +20,7 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
      * [titleRectangle], [graphRectangle], [gridRectangle] represent rectangles in which corresponding
      * parts of the chart are rendered (with [defaultMargin] indentation)
      */
-    val titleRectangle = Rectangle2D.Double()
+    val titleRectangle = getTitleRectangle(data.chartTitle, style.size.width, SVGCanvas)
     val graphRectangle = Rectangle2D.Double()
     val gridRectangle = Rectangle2D.Double()
 
@@ -47,28 +47,6 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
      */
     val xAxisLabelsLayouts = mutableListOf<TextLayout>()
     val yAxisLabelsLayouts = mutableListOf<TextLayout>()
-
-    /**
-     * Renders title and calculates title rectangle.
-     */
-    fun renderTitleSetTitleRectangle() {
-        titleRectangle.apply {
-            x = defaultMargin
-            y = defaultMargin
-            width = style.size.width.toDouble() - 2 * defaultMargin
-            height = 0.0
-        }
-
-        if (data.chartTitle.isNotEmpty()) {
-            val titleLayout = TextLayout(data.chartTitle, titleFont, SVGCanvas.fontRenderContext)
-            titleRectangle.height = 2 * defaultMargin + titleLayout.bounds.height
-
-            titleLayout.draw(
-                SVGCanvas, (titleRectangle.centerX - (titleLayout.bounds.width / 2.0) - titleLayout.bounds.x).toFloat(),
-                (titleRectangle.centerY - (titleLayout.bounds.height / 2.0) - titleLayout.bounds.y).toFloat()
-            )
-        }
-    }
 
     /**
      * Returns minimal number such that all elements of the list become (or stay) non-negative after adding it to each
@@ -173,7 +151,7 @@ data class ScatterChart(val data: ScatterChartData, val style: ScatterChartStyle
      * Renders whole chart.
      */
     fun render() {
-        renderTitleSetTitleRectangle()
+        renderTitle(data.chartTitle, titleRectangle, SVGCanvas)
 
         generateValuesLabels()
         generateAllLabelsLayouts()
