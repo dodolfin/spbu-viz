@@ -24,7 +24,7 @@ data class PieChart(val data: PieChartData, val style: PieChartStyle, val SVGCan
     val titleRectangle = getTitleRectangle(data.chartTitle, style.size.width, SVGCanvas)
     val graphRectangle = Rectangle2D.Double()
     val pieRectangle = Rectangle2D.Double()
-    val legendRectangle = Rectangle2D.Double()
+    var legendRectangle = Rectangle2D.Double()
 
     /**
      * Stores the color of each column.
@@ -68,18 +68,6 @@ data class PieChart(val data: PieChartData, val style: PieChartStyle, val SVGCan
     fun generateAllLabelsLayouts() {
         data.columnsTitles.forEach {
             columnsLabelsLayouts.add(TextLayout(it, labelFont, SVGCanvas.fontRenderContext))
-        }
-    }
-
-    /**
-     * Calculates legend rectangle.
-     */
-    fun setLegendRectangle() {
-        legendRectangle.apply {
-            x = defaultMargin
-            y = style.size.height.toDouble() - defaultMargin - columnsLabelsLayouts.maxOf { it.bounds.height }
-            width = style.size.width.toDouble() - 2 * defaultMargin
-            height = if (style.displayLegend) columnsLabelsLayouts.maxOf { it.bounds.height } else 0.0
         }
     }
 
@@ -146,7 +134,7 @@ data class PieChart(val data: PieChartData, val style: PieChartStyle, val SVGCan
         setDataSum()
 
         generateAllLabelsLayouts()
-        setLegendRectangle()
+        legendRectangle = setLegendRectangle(style.size, columnsLabelsLayouts, style.displayLegend)
         setGraphAndPieRectangle()
 
         setSectorsColors()

@@ -28,7 +28,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
     val titleRectangle = getTitleRectangle(data.chartTitle, style.size.width, SVGCanvas)
     val graphRectangle = Rectangle2D.Double()
     val gridRectangle = Rectangle2D.Double()
-    val legendRectangle = Rectangle2D.Double()
+    var legendRectangle = Rectangle2D.Double()
 
     /**
      * Despite its name, [barsRectangles] only represents parts of the grid in which bars may be present and not the bars themselves.
@@ -109,19 +109,6 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
         }
         valuesAxisLabels.forEach {
             valuesLabelsLayouts.add(TextLayout(it.toString(), labelFont, SVGCanvas.fontRenderContext))
-        }
-    }
-
-    /**
-     * Calculates legend rectangle.
-     */
-    fun setLegendRectangle() {
-        legendRectangle.apply {
-            x = defaultMargin
-            y = style.size.height.toDouble() - defaultMargin - columnsLabelsLayouts.maxOf { it.bounds.height }
-            width = style.size.width.toDouble() - 2 * defaultMargin
-            height =
-                if (style.displayLegend) columnsLabelsLayouts.maxOf { it.bounds.height } else 0.0 + 2 * defaultMargin
         }
     }
 
@@ -366,7 +353,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
 
         generateValuesLabels()
         generateAllLabelsLayouts()
-        setLegendRectangle()
+        legendRectangle = setLegendRectangle(style.size, columnsLabelsLayouts, style.displayLegend)
         setGraphAndGridRectangle()
 
         renderYAxisLabels()

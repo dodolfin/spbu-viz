@@ -1,4 +1,5 @@
 import java.awt.Color
+import java.awt.Dimension
 import java.awt.font.TextLayout
 import java.awt.geom.Line2D
 import java.awt.geom.Rectangle2D
@@ -114,6 +115,18 @@ fun renderGrid(gridRectangle: Rectangle2D, numberOfLines: Int, orientation: Orie
         }
     }
 }
+
+/**
+ * Returns legend rectangle.
+ */
+fun setLegendRectangle(size: Dimension, columnsLabelsLayouts: List<TextLayout>, displayLegend: Boolean = true): Rectangle2D.Double =
+    Rectangle2D.Double().apply {
+        x = defaultMargin
+        y = size.height.toDouble() - defaultMargin - columnsLabelsLayouts.maxOf { it.bounds.height }
+        width = size.width.toDouble() - 2 * defaultMargin
+        height =
+            if (displayLegend) columnsLabelsLayouts.maxOf { it.bounds.height } else 0.0 + 2 * defaultMargin
+    }
 
 /**
  * Renders legend if [displayLegend] is true.
