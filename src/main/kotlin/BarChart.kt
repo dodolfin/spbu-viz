@@ -79,12 +79,8 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
      */
     fun generateValuesLabels() {
         val maxValue = when (style.multipleValuesDisplay) {
-            CLUSTERED -> {
-                data.values.flatten().maxOrNull()
-            }
-            STACKED -> {
-                data.values.map { row -> row.sum() }.maxOrNull()
-            }
+            CLUSTERED -> data.values.flatten().maxOrNull()
+            STACKED -> data.values.map { row -> row.sum() }.maxOrNull()
         }
         checkNotNull(maxValue)
 
@@ -116,36 +112,18 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
      * Renders Y (vertical) axis labels. Note that depending on [style].orientation, those might be [valuesLabelsLayouts],
      * as well as [rowsLabelsLayouts].
      */
-    fun renderYAxisLabels() {
-        when (style.orientation) {
-            VERTICAL -> {
-                getLinearInterpolation(
-                    gridRectangle.minY,
-                    gridRectangle.maxY,
-                    valuesAxisLabels.size
-                ).forEachIndexed { index, y ->
-                    val layout = valuesLabelsLayouts[index]
-                    layout.draw(
-                        SVGCanvas,
-                        (gridRectangle.minX - layout.bounds.width - layout.bounds.x - defaultMargin).toFloat(),
-                        (y - (layout.bounds.y / 2.0)).toFloat()
-                    )
-                }
-            }
-            HORIZONTAL -> {
-                getLinearInterpolationMiddles(
-                    gridRectangle.minY,
-                    gridRectangle.maxY,
-                    rowsLabelsLayouts.size
-                ).forEachIndexed { index, y ->
-                    val layout = rowsLabelsLayouts[index]
-                    layout.draw(
-                        SVGCanvas,
-                        (gridRectangle.minX - layout.bounds.width - layout.bounds.x - defaultMargin).toFloat(),
-                        (y - (layout.bounds.y / 2.0)).toFloat()
-                    )
-                }
-            }
+    fun renderYAxisLabels(yAxisLabelsLayouts: List<TextLayout>) {
+        getLinearInterpolation(
+            gridRectangle.minY,
+            gridRectangle.maxY,
+            yAxisLabelsLayouts.size
+        ).forEachIndexed { index, y ->
+            val layout = yAxisLabelsLayouts[index]
+            layout.draw(
+                SVGCanvas,
+                (gridRectangle.minX - layout.bounds.width - layout.bounds.x - defaultMargin).toFloat(),
+                (y - (layout.bounds.y / 2.0)).toFloat()
+            )
         }
     }
 
@@ -153,34 +131,17 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
      * Renders X (horizontal) axis labels. Note that depending on [style].orientation, those might be [valuesLabelsLayouts],
      * as well as [rowsLabelsLayouts].
      */
-    fun renderXAxisLabels() {
-        when (style.orientation) {
-            VERTICAL -> {
-                getLinearInterpolationMiddles(
-                    gridRectangle.minX,
-                    gridRectangle.maxX,
-                    rowsLabelsLayouts.size
-                ).forEachIndexed { index, x ->
-                    val layout = rowsLabelsLayouts[index]
-                    layout.draw(
-                        SVGCanvas, (x - (layout.bounds.width / 2.0) - layout.bounds.x).toFloat(),
-                        (gridRectangle.maxY - layout.bounds.y + defaultMargin).toFloat()
-                    )
-                }
-            }
-            HORIZONTAL -> {
-                getLinearInterpolation(
-                    gridRectangle.minX,
-                    gridRectangle.maxX,
-                    valuesLabelsLayouts.size
-                ).forEachIndexed { index, x ->
-                    val layout = valuesLabelsLayouts[index]
-                    layout.draw(
-                        SVGCanvas, (x - (layout.bounds.width / 2.0) - layout.bounds.x).toFloat(),
-                        (gridRectangle.maxY - layout.bounds.y + defaultMargin).toFloat()
-                    )
-                }
-            }
+    fun renderXAxisLabels(xAxisLabelsLayouts: List<TextLayout>) {
+        getLinearInterpolationMiddles(
+            gridRectangle.minX,
+            gridRectangle.maxX,
+            xAxisLabelsLayouts.size
+        ).forEachIndexed { index, x ->
+            val layout = xAxisLabelsLayouts[index]
+            layout.draw(
+                SVGCanvas, (x - (layout.bounds.width / 2.0) - layout.bounds.x).toFloat(),
+                (gridRectangle.maxY - layout.bounds.y + defaultMargin).toFloat()
+            )
         }
     }
 
@@ -189,45 +150,27 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
      * for more information
      */
     fun setBarsRectanglesAndColors() {
-        when (style.orientation) {
-            VERTICAL -> {
-                val width = getLinearInterpolationDelta(gridRectangle.minX, gridRectangle.maxX, data.values.size + 1)
-                getLinearInterpolation(gridRectangle.minX, gridRectangle.maxX, data.values.size + 1).dropLast(1)
-                    .forEach { x ->
-                        val startX = x + ((1 - style.barWidthRate) / 2.0) * width
-                        val endX = x + (0.5 + style.barWidthRate / 2.0) * width
-                        barsRectangles.add(
-                            Rectangle2D.Double(
-                                startX,
-                                gridRectangle.minY,
-                                endX - startX,
-                                gridRectangle.height
-                            )
-                        )
-                    }
-                repeat(data.values[0].size) {
-                    columnsColors.add(style.barColors[nextColor()])
+        val isVertical = style.orientation == VERTICAL
+        val minCoordinate = if (isVertical) gridRectangle.minX else gridRectangle.minY
+        val maxCoordinate = if (isVertical) gridRectangle.maxX else gridRectangle.maxY
+
+        val oneBarDimension = getLinearInterpolationDelta(minCoordinate, maxCoordinate, data.values.size + 1)
+
+        getLinearInterpolation(minCoordinate, maxCoordinate, data.values.size + 1).dropLast(1).forEach { coordinate ->
+            val startCoordinate = coordinate + ((1 - style.barWidthRate) / 2.0) * oneBarDimension
+            val endCoordinate = coordinate + (0.5 + style.barWidthRate / 2.0) * oneBarDimension
+
+            barsRectangles.add(
+                if (isVertical) {
+                    Rectangle2D.Double(startCoordinate, gridRectangle.minY, endCoordinate - startCoordinate, gridRectangle.height)
+                } else {
+                    Rectangle2D.Double(gridRectangle.minX, startCoordinate, gridRectangle.width, endCoordinate - startCoordinate)
                 }
-            }
-            HORIZONTAL -> {
-                val height = getLinearInterpolationDelta(gridRectangle.minY, gridRectangle.maxY, data.values.size + 1)
-                getLinearInterpolation(gridRectangle.minY, gridRectangle.maxY, data.values.size + 1).dropLast(1)
-                    .forEach { y ->
-                        val startY = y + ((1 - style.barWidthRate) / 2.0) * height
-                        val endY = y + (0.5 + style.barWidthRate / 2.0) * height
-                        barsRectangles.add(
-                            Rectangle2D.Double(
-                                gridRectangle.minX,
-                                startY,
-                                gridRectangle.width,
-                                endY - startY
-                            )
-                        )
-                    }
-                repeat(data.values[0].size) {
-                    columnsColors.add(style.barColors[nextColor()])
-                }
-            }
+            )
+        }
+
+        repeat(data.values[0].size) {
+            columnsColors.add(style.barColors[nextColor()])
         }
     }
 
@@ -332,8 +275,8 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
             if (style.orientation == VERTICAL) valuesLabelsLayouts else rowsLabelsLayouts,
         )
 
-        renderYAxisLabels()
-        renderXAxisLabels()
+        renderYAxisLabels(if (style.orientation == VERTICAL) valuesLabelsLayouts else rowsLabelsLayouts)
+        renderXAxisLabels(if (style.orientation == VERTICAL) rowsLabelsLayouts else valuesLabelsLayouts)
         renderGrid(gridRectangle, valuesAxisLabels.size, style.orientation, SVGCanvas)
 
         setBarsRectanglesAndColors()
