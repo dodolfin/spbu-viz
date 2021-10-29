@@ -113,7 +113,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
      * as well as [rowsLabelsLayouts].
      */
     fun renderYAxisLabels(yAxisLabelsLayouts: List<TextLayout>) {
-        getLinearInterpolation(
+        (if (style.orientation == VERTICAL) ::getLinearInterpolation else ::getLinearInterpolationMiddles)(
             gridRectangle.minY,
             gridRectangle.maxY,
             yAxisLabelsLayouts.size
@@ -132,7 +132,7 @@ data class BarChart(val data: BarChartData, val style: BarChartStyle, val SVGCan
      * as well as [rowsLabelsLayouts].
      */
     fun renderXAxisLabels(xAxisLabelsLayouts: List<TextLayout>) {
-        getLinearInterpolationMiddles(
+        (if (style.orientation == VERTICAL) ::getLinearInterpolationMiddles else ::getLinearInterpolation)(
             gridRectangle.minX,
             gridRectangle.maxX,
             xAxisLabelsLayouts.size
