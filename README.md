@@ -1,7 +1,8 @@
-# Курс основ программирования на МКН СПбГУ
-## Проект 3: визуализация данных
+# Programming Fundamentals course. Mathematics and Computer Science Faculty at SPbU
 
-[Постановка задачи](./TASK.md)
+## Project #3. Data visualization
+
+[Task (in Russian)](./TASK.md)
 
 ## Usage
 `distribution/bin/pf-2021-viz -d <PATH TO INPUT CSV> -t <bar|histogram|pie|scatter> [OPTIONS]` (run from root directory)
